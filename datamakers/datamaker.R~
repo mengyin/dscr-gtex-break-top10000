@@ -1,0 +1,118 @@
+datamaker = function(args){  
+  tissue = args$tissue
+  #rawdata = read.table(paste0("/Volumes/PERSONAL/MS/dscr-gtex/",tissue,".txt"),header=TRUE)
+  rawdata = read.table(paste0("/mnt/lustre/home/mengyin/dscr-gtex/",tissue,".txt"),header=TRUE)
+  
+  Nsamp = args$Nsamp # Number of samples in each of the 2 groups
+  if (dim(rawdata)[2] < 2*Nsamp){
+    stop("Not enough samples in the raw dataset!")
+  }
+  subsample = sample(1:dim(rawdata)[2],2*Nsamp)
+  counts = rawdata[,subsample]
+  counts = counts[apply(counts,1,sum)>0,]
+  
+  Ngene = args$Ngene # Take the top Ngene high-expressed genes
+  if (!is.null(Ngene)){
+    Ngene = min(Ngene, dim(counts)[1])
+    counts = counts[sort(order(rowSums(counts),decreasing=TRUE)[1:Ngene]),]
+  }
+  
+  condition = factor(rep(1:2,each=Nsamp))
+  design = model.matrix(~condition)
+  
+  # Voom transformation
+  library(edgeR)
+  dgecounts = DGEList(counts=counts,group=condition)
+  if (args$voom.normalize == TRUE){
+      print("1")
+    dgecounts = calcNormFactors(dgecounts)
+  }
+  library(limma)
+  v = voom(dgecounts,design,plot=FALSE)
+  zdat.voom = apply(cbind(v$E,v$weights),1,wls.wrapper,g=condition)
+  betahat.voom = zdat.voom[1,]
+  sebetahat.voom = zdat.voom[2,]
+  df.voom = length(condition)-2
+  
+  # Quasi-binomial glm
+  zdat.qb = counts.associate(counts, condition)
+  betahat.qb = zdat.qb[3,]
+  sebetahat.qb = zdat.qb[4,]
+  df.qb = length(condition)-2
+  
+  # meta data
+  meta = list(tissue=tissue, subsample=subsample)
+  
+  # input data
+  input = list(counts=counts, condition=condition,
+               v=v, betahat.voom=betahat.voom, sebetahat.voom=sebetahat.voom, df.voom=df.voom,
+               betahat.qb=betahat.qb, sebetahat.qb=sebetahat.qb, df.qb=df.qb)
+  
+  data = list(meta=meta,input=input)
+  return(data)
+}
+
+
+wls.wrapper = function(ynweights,g,...){
+  y = ynweights[1:(length(ynweights)/2)]
+  weights = ynweights[(length(ynweights)/2+1):length(ynweights)]
+  y.wls = lm(y~g,weights=weights,...)
+  
+  # slope estimate & standard error
+  c = as.vector(t(summary(y.wls)$coeff[2,1:2]))
+  return(c)
+}
+
+# counts is a ngene (or nwindow) by nsample matrix of counts (eg RNAseq)
+# g is an nsample vector of group memberships/covariate
+# looks for association between rows and covariate
+counts.associate=function(counts, g,pseudocounts=1){
+  y.counts=t(as.matrix(counts)) 
+  col.sum = apply(y.counts, 2, sum)
+  y.counts=y.counts[,col.sum>0] #remove 0 columns
+  y.counts = y.counts+pseudocounts 
+  C = apply(y.counts,1,sum)
+  y.prop = y.counts/C # compute proportions
+  zdat = apply(y.prop,2,glm.binomial.wrapper,g=g,weights=C)  #estimate effect sizes and standard errors
+  #zdat.ash = ash(zdat[3,],zdat[4,],df=2,method='fdr') #shrink the estimated effects
+  #return(list(zdat=zdat,zdat.ash=zdat.ash))
+  return(zdat)
+}
+
+glm.binomial.wrapper = function(y,g,...){
+  y.glm=safe.quasibinomial.glm(y~g,...)
+  return(get.coeff(y.glm))
+}
+
+glm.binomial.wrapper.new = function(y,g,...){
+  dm=matrix(c(rep(1,length(g)),g),ncol=2)
+  return(safe.quasibinomial.glm.fit(dm,y,...))
+}
+
+#fill NAs with 0s (or other value)
+fill.nas=function(x,t=0){
+  x[is.na(x)]=t
+  return(x)
+}
+
+#get estimates and standard errors from a glm object
+#return NAs if not converged
+get.coeff=function(x.glm){
+  c=as.vector(t(summary(x.glm)$coeff[,1:2]))  
+  if(x.glm$conv){return(c)} else {return(rep(NA,length(c)))}
+}
+
+
+
+# use glm to fit quasibinomial, but don't allow for underdispersion!
+safe.quasibinomial.glm=function(formula,forcebin=FALSE,...){
+  if(forcebin){
+    fm=glm(formula,family=binomial,...)
+  } else{
+    fm = glm(formula,family=quasibinomial,...)
+    if(is.na(summary(fm)$dispersion) | summary(fm)$dispersion<1){
+      fm=glm(formula,family=binomial,...)
+    }
+  }
+  return(fm)
+}
