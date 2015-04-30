@@ -22,7 +22,7 @@ edger.wrapper = function(input,args){
     if(args$RUV==TRUE){
       design = model.matrix(~input$condition+input$W.RUV)
     }else if(args$SVA==TRUE){
-      if (sum(input$W.RUV!=0)){
+      if (sum(input$W.SVA!=0)){
         design = model.matrix(~input$condition+input$W.SVA) 
       }else{
         design = model.matrix(~input$condition) 

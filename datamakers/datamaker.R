@@ -2,8 +2,7 @@ datamaker = function(args){
   tissue = args$tissue
   
   rawdata1 = read.table(paste0(path,"/dscr-gtex/",tissue[1],".txt"),header=TRUE)
-  #rawdata1 = read.table(paste0("/mnt/lustre/home/mengyin/dscr-gtex/",tissue[1],".txt"),header=TRUE)
-  
+    
   Nsamp = args$Nsamp # Number of samples in each of the 2 groups
   
   if (is.null(args$poisthin)){
@@ -26,7 +25,6 @@ datamaker = function(args){
   
   if (length(tissue)>1){
     rawdata2 = read.table(paste0(path,"/dscr-gtex/",tissue[2],".txt"),header=TRUE)
-    #rawdata2 = read.table(paste0("/mnt/lustre/home/mengyin/dscr-gtex/",tissue[2],".txt"),header=TRUE)
     if (dim(rawdata1)[2]<Nsamp | dim(rawdata2)[2]<Nsamp){
       stop("Not enough samples in the raw dataset!")
     }
