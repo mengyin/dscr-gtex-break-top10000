@@ -1,6 +1,6 @@
 library(dscr)
 
-#args = commandArgs(TRUE)
+args = commandArgs(TRUE)
 
 dsc_gtex = new.dsc("gtex","dsc-gtex-files")
 source("scenarios.R")
@@ -23,8 +23,8 @@ addOutputParser(dsc_gtex,"ash2qval",jointash2qval_est,"ash_output","qval_output"
 
 addScore(dsc_gtex,score,name="score",outputtype="qval_output")
 
-res=run_dsc(dsc_gtex)
-#res=run_dsc(dsc_gtex, seedsubset=args[2])
+#res=run_dsc(dsc_gtex)
+res=run_dsc(dsc_gtex, seedsubset=args[2])
 
 # save(res,file="res.Rdata")
 
