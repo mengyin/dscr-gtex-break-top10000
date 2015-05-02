@@ -142,7 +142,8 @@ datamaker = function(args){
   
   # Myrna & Quasi-binomial glm
   # Use log(75th quantile of samples' counts) as covariate
-  zdat.Myrnaqb = counts.associate(counts, condition, W=apply(counts,2,function(x) log(quantile(x[x>0],0.75))))
+  W.Myrna = apply(counts,2,function(x) log(quantile(x[x>0],0.75)))
+  zdat.Myrnaqb = counts.associate(counts, condition, W=W.Myrna)
   betahat.Myrnaqb = zdat.qb[3,]
   sebetahat.Myrnaqb = zdat.qb[4,]
   df.Myrnaqb = length(condition)-2-1
@@ -190,7 +191,8 @@ datamaker = function(args){
                v=v, betahat.voom=betahat.voom, sebetahat.voom=sebetahat.voom, df.voom=df.voom,
                betahat.qb=betahat.qb, sebetahat.qb=sebetahat.qb, df.qb=df.qb,
                betahat.RUVqb=betahat.RUVqb, sebetahat.RUVqb=sebetahat.RUVqb, df.RUVqb=df.RUVqb, W.RUV=pData(seqRUVs)$W_1,
-               betahat.SVAqb=betahat.SVAqb, sebetahat.SVAqb=sebetahat.SVAqb, df.SVAqb=df.SVAqb, W.SVA=svseq$sv)
+               betahat.SVAqb=betahat.SVAqb, sebetahat.SVAqb=sebetahat.SVAqb, df.SVAqb=df.SVAqb, W.SVA=svseq$sv,
+               betahat.Myrnaqb=betahat.Myrnaqb, sebetahat.Myrnaqb=sebetahat.Myrnaqb, df.Myrnaqb=df.Myrnaqb, W.Myrna=W.Myrna)
   
   data = list(meta=meta,input=input)
   return(data)
