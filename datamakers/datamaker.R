@@ -140,6 +140,13 @@ datamaker = function(args){
   sebetahat.qb = zdat.qb[4,]
   df.qb = length(condition)-2
   
+  # Myrna & Quasi-binomial glm
+  # Use log(75th quantile of samples' counts) as covariate
+  zdat.Myrnaqb = counts.associate(counts, condition, W=apply(counts,2,function(x) log(quantile(x[x>0],0.75))))
+  betahat.Myrnaqb = zdat.qb[3,]
+  sebetahat.Myrnaqb = zdat.qb[4,]
+  df.Myrnaqb = length(condition)-2-1
+  
   # RUV & quasi-binomial glm
   library(RUVSeq)
   seq = newSeqExpressionSet(as.matrix(counts))

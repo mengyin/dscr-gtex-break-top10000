@@ -1,8 +1,8 @@
 library(dscr)
 
 dsc_gtex = new.dsc("gtex","dsc-gtex-files")
-source("scenarios.R")
-source("methods.R")
+source("scenarios_test.R")
+source("methods_test.R")
 source("score.R")
 
 jointash2qval_est =function(output){
@@ -15,7 +15,7 @@ jointash2qval_est =function(output){
   }else{
     return(list(qvalue=NA, qvalue.fsr=NA))
   }
-}
+} 
 addOutputParser(dsc_gtex,"jointash2qval",jointash2qval_est,"jointash_output","qval_output")
 addOutputParser(dsc_gtex,"ash2qval",jointash2qval_est,"ash_output","qval_output")
 
