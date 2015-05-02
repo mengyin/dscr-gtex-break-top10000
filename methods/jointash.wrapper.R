@@ -14,6 +14,10 @@ jointash.wrapper = function(input,args){
     betahat = input$betahat.qb
     sebetahat = input$sebetahat.qb
     df = input$df.qb
+  }else if (args$transform=="Myrna+quasibinom"){
+    betahat = input$betahat.Myrnaqb
+    sebetahat = input$sebetahat.Myrnaqb
+    df = input$df.Myrnaqb
   }else if (args$transform=="RUV+quasibinom"){
     betahat = input$betahat.RUVqb
     sebetahat = input$sebetahat.RUVqb
