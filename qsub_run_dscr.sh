@@ -38,5 +38,5 @@ fi
 for i in {1..50}; do
  echo "/data/tools/R-3.1.1/bin/Rscript run_dsc.R ${OUT_DIR} $i" | \
     qsub -l h_vmem=${MEM} -v PATH -cwd \
-     -o ${LOG_DIR}"_log.out" -e ${LOG_DIR}"_log.err"
+     -o ${LOG_DIR} -e ${LOG_DIR}$
 done
