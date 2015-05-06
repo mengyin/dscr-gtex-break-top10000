@@ -1,7 +1,7 @@
 # Methods: 
 sourceDir("methods")
 
-# addMethod(dsc_gtex,name="DESeq",fn=deseq.wrapper,outputtype="qval_output",args=list(exacttest=TRUE))
+addMethod(dsc_gtex,name="DESeq",fn=deseq.wrapper,outputtype="qval_output",args=list(exacttest=TRUE))
 # addMethod(dsc_gtex,name="DESeq.glm",fn=deseq.wrapper,outputtype="qval_output",args=list(exacttest=FALSE))
 
 addMethod(dsc_gtex,name="edgeR",fn=edger.wrapper,outputtype="qval_output",args=list(exacttest=TRUE))
@@ -59,7 +59,7 @@ addMethod(dsc_gtex,name="SVAqb+jointash.single.u",fn=jointash.wrapper,outputtype
 
 addMethod(dsc_gtex,name="Myrnaqb+jointash.single.u",fn=jointash.wrapper,outputtype="jointash_output",
           args=list(transform="Myrna+quasibinom",singlecomp=TRUE))
-#addMethod(dsc_gtex,name="Myrnaqb+jointash.mix.n",fn=jointash.wrapper,outputtype="jointash_output",
-#           args=list(transform="Myrna+quasibinom",singlecomp=FALSE))
-#addMethod(dsc_gtex,name="Myrnaqb+jointash.mix.u",fn=jointash.wrapper,outputtype="jointash_output",
-#           args=list(transform="Myrna+quasibinom",singlecomp=FALSE,mixcompdist="uniform"))
+addMethod(dsc_gtex,name="Myrnaqb+jointash.mix.n",fn=jointash.wrapper,outputtype="jointash_output",
+          args=list(transform="Myrna+quasibinom",singlecomp=FALSE))
+addMethod(dsc_gtex,name="Myrnaqb+jointash.mix.u",fn=jointash.wrapper,outputtype="jointash_output",
+          args=list(transform="Myrna+quasibinom",singlecomp=FALSE,mixcompdist="uniform"))

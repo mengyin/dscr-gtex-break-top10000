@@ -14,11 +14,9 @@ datamaker = function(args){
   if (is.null(args$nullpi)){
     if (args$poisthin==TRUE){
       args$nullpi = 0.9
-    }
-    if (length(args$tissue)==1){
+    }else if (length(args$tissue)==1){
       args$nullpi = 1
-    }
-    if (length(args$tissue)>1){
+    }else if (length(args$tissue)>1){
       args$nullpi = 0
     }
   }
