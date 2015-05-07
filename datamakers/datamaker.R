@@ -136,14 +136,16 @@ datamaker = function(args){
   zdat.qb = counts.associate(counts, condition)
   betahat.qb = zdat.qb[3,]
   sebetahat.qb = zdat.qb[4,]
+  dispersion.qb = zdat.qb[5,]
   df.qb = length(condition)-2
   
   # Myrna & Quasi-binomial glm
   # Use log(75th quantile of samples' counts) as covariate
   W.Myrna = apply(counts,2,function(x) log(quantile(x[x>0],0.75)))
   zdat.Myrnaqb = counts.associate(counts, condition, W=W.Myrna)
-  betahat.Myrnaqb = zdat.qb[3,]
-  sebetahat.Myrnaqb = zdat.qb[4,]
+  betahat.Myrnaqb = zdat.Myrnaqb[3,]
+  sebetahat.Myrnaqb = zdat.Myrnaqb[4,]
+  dispersion.Myrnaqb = zdat.Myrnaqb[5,]
   df.Myrnaqb = length(condition)-2-1
   
   # RUV & quasi-binomial glm
@@ -158,6 +160,7 @@ datamaker = function(args){
   zdat.RUVqb = counts.associate(counts, condition, W=pData(seqRUVs)$W_1)
   betahat.RUVqb = zdat.RUVqb[3,]
   sebetahat.RUVqb = zdat.RUVqb[4,]
+  dispersion.RUVqb = zdat.RUVqb[5,]
   df.RUVqb = length(condition)-2-args$RUV.k
   
   # SVA & quasi-binomial glm
@@ -178,6 +181,7 @@ datamaker = function(args){
   }
   betahat.SVAqb = zdat.SVAqb[3,]
   sebetahat.SVAqb = zdat.SVAqb[4,]
+  dispersion.SVAqb = zdat.SVAqb[5,]
   df.SVAqb = length(condition)-2-svseq$n.sv
   
   # meta data
@@ -187,10 +191,10 @@ datamaker = function(args){
   # input data
   input = list(counts=counts, condition=condition,
                v=v, betahat.voom=betahat.voom, sebetahat.voom=sebetahat.voom, df.voom=df.voom,
-               betahat.qb=betahat.qb, sebetahat.qb=sebetahat.qb, df.qb=df.qb,
-               betahat.RUVqb=betahat.RUVqb, sebetahat.RUVqb=sebetahat.RUVqb, df.RUVqb=df.RUVqb, W.RUV=pData(seqRUVs)$W_1,
-               betahat.SVAqb=betahat.SVAqb, sebetahat.SVAqb=sebetahat.SVAqb, df.SVAqb=df.SVAqb, W.SVA=svseq$sv,
-               betahat.Myrnaqb=betahat.Myrnaqb, sebetahat.Myrnaqb=sebetahat.Myrnaqb, df.Myrnaqb=df.Myrnaqb, W.Myrna=W.Myrna)
+               betahat.qb=betahat.qb, sebetahat.qb=sebetahat.qb, df.qb=df.qb, dispersion.qb=dispersion.qb,
+               betahat.RUVqb=betahat.RUVqb, sebetahat.RUVqb=sebetahat.RUVqb, dispersion.RUVqb=dispersion.RUVqb, df.RUVqb=df.RUVqb, W.RUV=pData(seqRUVs)$W_1,
+               betahat.SVAqb=betahat.SVAqb, sebetahat.SVAqb=sebetahat.SVAqb, dispersion.SVAqb=dispersion.SVAqb, df.SVAqb=df.SVAqb, W.SVA=svseq$sv,
+               betahat.Myrnaqb=betahat.Myrnaqb, sebetahat.Myrnaqb=sebetahat.Myrnaqb, dispersion.Myrnaqb=dispersion.Myrnaqb, df.Myrnaqb=df.Myrnaqb, W.Myrna=W.Myrna)
   
   data = list(meta=meta,input=input)
   return(data)
@@ -232,7 +236,7 @@ glm.binomial.wrapper = function(y,g,W=NULL,...){
     y.glm=safe.quasibinomial.glm(y~g+W,...)
   }
   
-  return(get.coeff(y.glm))
+  return(c(get.coeff(y.glm),summary(y.glm)$dispersion))
 }
 
 
