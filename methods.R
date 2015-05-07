@@ -62,3 +62,10 @@ addMethod(dsc_gtex,name="Myrnaqb+jointash.mix.n",fn=jointash.wrapper,outputtype=
           args=list(transform="Myrna+quasibinom",singlecomp=FALSE))
 addMethod(dsc_gtex,name="Myrnaqb+jointash.mix.u",fn=jointash.wrapper,outputtype="jointash_output",
           args=list(transform="Myrna+quasibinom",singlecomp=FALSE,mixcompdist="uniform"))
+
+addMethod(dsc_gtex,name="qb+jointash_disp.single.u",fn=jointash_disp.wrapper,outputtype="jointash_output",
+          args=list(transform="quasibinom",singlecomp=TRUE))
+addMethod(dsc_gtex,name="qb+jointash_disp.mix.n",fn=jointash_disp.wrapper,outputtype="jointash_output",
+          args=list(transform="quasibinom",singlecomp=FALSE,mixcompdist="normal"))
+addMethod(dsc_gtex,name="qb+jointash_disp.mix.u",fn=jointash_disp.wrapper,outputtype="jointash_output",
+          args=list(transform="quasibinom",singlecomp=FALSE,mixcompdist="uniform"))
