@@ -16,6 +16,10 @@ ash.wrapper = function(input,args){
     betahat = input$betahat.Myrnaqb
     sebetahat = input$sebetahat.Myrnaqb
     df = input$df.Myrnaqb
+  }else if (args$transform=="Myrnaoff+quasibinom"){
+    betahat = input$betahat.Myrnaoffqb
+    sebetahat = input$sebetahat.Myrnaoffqb
+    df = input$df.Myrnaoffqb
   }else if (args$transform=="RUV+quasibinom"){
     betahat = input$betahat.RUVqb
     sebetahat = input$sebetahat.RUVqb

@@ -142,11 +142,19 @@ datamaker = function(args){
   # Myrna & Quasi-binomial glm
   # Use log(75th quantile of samples' counts) as covariate
   W.Myrna = apply(counts,2,function(x) log(quantile(x[x>0],0.75)))
+  
   zdat.Myrnaqb = counts.associate(counts, condition, W=W.Myrna)
   betahat.Myrnaqb = zdat.Myrnaqb[3,]
   sebetahat.Myrnaqb = zdat.Myrnaqb[4,]
   dispersion.Myrnaqb = zdat.Myrnaqb[5,]
   df.Myrnaqb = length(condition)-2-1
+  # Use log(75th quantile of samples' counts) as offset
+  offset.Myrnaoff = apply(counts,2,function(x) quantile(x[x>0],0.75))
+  zdat.Myrnaoffqb = counts.associate(counts, condition, W=NULL, offset=offset.Myrnaoff)
+  betahat.Myrnaoffqb = zdat.Myrnaoffqb[3,]
+  sebetahat.Myrnaoffqb = zdat.Myrnaoffqb[4,]
+  dispersion.Myrnaoffqb = zdat.Myrnaoffqb[5,]
+  df.Myrnaoffqb = length(condition)-2
   
   # RUV & quasi-binomial glm
   library(RUVSeq)
@@ -194,7 +202,8 @@ datamaker = function(args){
                betahat.qb=betahat.qb, sebetahat.qb=sebetahat.qb, df.qb=df.qb, dispersion.qb=dispersion.qb,
                betahat.RUVqb=betahat.RUVqb, sebetahat.RUVqb=sebetahat.RUVqb, dispersion.RUVqb=dispersion.RUVqb, df.RUVqb=df.RUVqb, W.RUV=pData(seqRUVs)$W_1,
                betahat.SVAqb=betahat.SVAqb, sebetahat.SVAqb=sebetahat.SVAqb, dispersion.SVAqb=dispersion.SVAqb, df.SVAqb=df.SVAqb, W.SVA=svseq$sv,
-               betahat.Myrnaqb=betahat.Myrnaqb, sebetahat.Myrnaqb=sebetahat.Myrnaqb, dispersion.Myrnaqb=dispersion.Myrnaqb, df.Myrnaqb=df.Myrnaqb, W.Myrna=W.Myrna)
+               betahat.Myrnaqb=betahat.Myrnaqb, sebetahat.Myrnaqb=sebetahat.Myrnaqb, dispersion.Myrnaqb=dispersion.Myrnaqb, df.Myrnaqb=df.Myrnaqb, W.Myrna=W.Myrna,
+               betahat.Myrnaoffqb=betahat.Myrnaoffqb, sebetahat.Myrnaoffqb=sebetahat.Myrnaoffqb, dispersion.Myrnaoffqb=dispersion.Myrnaoffqb, df.Myrnaoffqb=df.Myrnaoffqb, offset.Myrnaoff=offset.Myrnaoff)
   
   data = list(meta=meta,input=input)
   return(data)
@@ -216,14 +225,17 @@ wls.wrapper = function(ynweights,g,...){
 # counts is a ngene (or nwindow) by nsample matrix of counts (eg RNAseq)
 # g is an nsample vector of group memberships/covariate
 # looks for association between rows and covariate
-counts.associate=function(counts, g,pseudocounts=1,W=NULL){
+counts.associate=function(counts, g,pseudocounts=1,W=NULL,offset=NULL){
   y.counts=t(as.matrix(counts)) 
   col.sum = apply(y.counts, 2, sum)
   y.counts=y.counts[,col.sum>0] #remove 0 columns
   y.counts = y.counts+pseudocounts 
-  C = apply(y.counts,1,sum)
-  y.prop = y.counts/C # compute proportions
-  zdat = apply(y.prop,2,glm.binomial.wrapper,g=g,W=W,weights=C,epsilon=1e-6)  #estimate effect sizes and standard errors
+  if (is.null(offset)){
+    offset = apply(y.counts,1,sum)
+  }
+  
+  y.prop = y.counts/apply(y.counts,1,sum) # compute proportions
+  zdat = apply(y.prop,2,glm.binomial.wrapper,g=g,W=W,weights=offset,epsilon=1e-6)  #estimate effect sizes and standard errors
   #zdat.ash = ash(zdat[3,],zdat[4,],df=2,method='fdr') #shrink the estimated effects
   #return(list(zdat=zdat,zdat.ash=zdat.ash))
   return(zdat)
