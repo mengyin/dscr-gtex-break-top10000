@@ -106,7 +106,7 @@ datamaker = function(args){
                                                                   size=c(as.matrix(counts[which(!null)[log2foldchanges<0],(Nsamp+1):(2*Nsamp)])),
                                                                   prob=rep(foldchanges[log2foldchanges<0],Nsamp)),ncol=Nsamp)
     
-  }else if(args$nullpi<1){
+  }else if(args$nullpi<1 & args$nullpi>0){
     newcounts = matrix(rep(0, Ngene*2*Nsamp),nrow=Ngene)
     newcounts[as.logical(null),] = counts[as.logical(null),1:(2*Nsamp)]
     newcounts[!null,] = counts[!null,c(1:Nsamp,(2*Nsamp+1):(3*Nsamp))]
