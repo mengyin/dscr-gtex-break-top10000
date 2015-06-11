@@ -28,6 +28,14 @@ ash.wrapper = function(input,args){
     betahat = input$betahat.SVAqb
     sebetahat = input$sebetahat.SVAqb
     df = input$df.SVAqb
+  }else if (args$transform=="edgeRglm"){
+    betahat = input$betahat.edgeRglm
+    sebetahat = input$sebetahat.edgeRglm
+    df = input$df.edgeRglm
+  }else if (args$transform=="DESeqglm"){
+    betahat = input$betahat.DESeqglm
+    sebetahat = input$sebetahat.DESeqglm
+    df = input$df.DESeqglm
   }
   
   fit = ash(betahat,sebetahat,df=df,

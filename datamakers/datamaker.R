@@ -192,6 +192,34 @@ datamaker = function(args){
   dispersion.SVAqb = zdat.SVAqb[5,]
   df.SVAqb = length(condition)-2-svseq$n.sv
   
+  # Get sebetahat from edgeR.glm (infer from betahat & pval)
+  if (is.null(args$pseudocounts)){
+    args$pseudocounts = 1
+  }
+  y = DGEList(counts=counts+args$pseudocounts, group=condition)
+  y = calcNormFactors(y)
+  y = estimateGLMCommonDisp(y,design)
+  y = estimateGLMTrendedDisp(y,design)
+  y = estimateGLMTagwiseDisp(y,design)
+  fit = glmFit(y,design)
+  lrt = glmLRT(fit,coef=2)
+  betahat.edgeRglm = fit$coef[,2]
+  df.edgeRglm = length(condition)-2
+  tscore = qt(1-lrt$table$PValue/2,df=df.edgeRglm)
+  sebetahat.edgeRglm = abs(betahat.edgeRglm/tscore)
+  
+  # Get sebetahat from DESeq.glm (infer from betahat & pval)
+  cds = newCountDataSet(counts+args$pseudocounts, condition )
+  cds = estimateSizeFactors( cds )
+  cds = estimateDispersions( cds )
+  fit1 = fitNbinomGLMs( cds, count ~ condition )     
+  fit0 = fitNbinomGLMs( cds, count ~ 1 )
+  betahat.DESeqglm = fit1[,2]
+  df.DESeqglm = length(condition)-2
+  tscore = qt(1-nbinomGLMTest(fit1,fit0)/2,df=df.DESeqglm)
+  sebetahat.DESeqglm = abs(betahat.DESeqglm/tscore)
+  
+  
   # meta data
   meta = list(tissue=tissue, subsample=subsample, null=null, 
               args=args)
@@ -203,7 +231,9 @@ datamaker = function(args){
                betahat.RUVqb=betahat.RUVqb, sebetahat.RUVqb=sebetahat.RUVqb, dispersion.RUVqb=dispersion.RUVqb, df.RUVqb=df.RUVqb, W.RUV=pData(seqRUVs)$W_1,
                betahat.SVAqb=betahat.SVAqb, sebetahat.SVAqb=sebetahat.SVAqb, dispersion.SVAqb=dispersion.SVAqb, df.SVAqb=df.SVAqb, W.SVA=svseq$sv,
                betahat.Myrnaqb=betahat.Myrnaqb, sebetahat.Myrnaqb=sebetahat.Myrnaqb, dispersion.Myrnaqb=dispersion.Myrnaqb, df.Myrnaqb=df.Myrnaqb, W.Myrna=W.Myrna,
-               betahat.Myrnaoffqb=betahat.Myrnaoffqb, sebetahat.Myrnaoffqb=sebetahat.Myrnaoffqb, dispersion.Myrnaoffqb=dispersion.Myrnaoffqb, df.Myrnaoffqb=df.Myrnaoffqb, offset.Myrnaoff=offset.Myrnaoff)
+               betahat.Myrnaoffqb=betahat.Myrnaoffqb, sebetahat.Myrnaoffqb=sebetahat.Myrnaoffqb, dispersion.Myrnaoffqb=dispersion.Myrnaoffqb, df.Myrnaoffqb=df.Myrnaoffqb, offset.Myrnaoff=offset.Myrnaoff,
+               betahat.edgeRglm=betahat.edgeRglm, sebetahat.edgeRglm=sebetahat.edgeRglm,df.edgeRglm=df.edgeRglm,
+               betahat.DESeqglm=betahat.DESeqglm, sebetahat.DESeqglm=sebetahat.DESeqglm,df.DESeqglm=df.DESeqglm)
   
   data = list(meta=meta,input=input)
   return(data)

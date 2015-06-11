@@ -79,3 +79,17 @@ addMethod(dsc_gtex,name="Myrnaoffqb+jointash.single.u",fn=jointash.wrapper,outpu
 #           args=list(transform="Myrnaoff+quasibinom",singlecomp=FALSE,mixcompdist="normal"))
 # addMethod(dsc_gtex,name="Myrnaoffqb+jointash.mix.u",fn=jointash.wrapper,outputtype="jointash_output",
 #           args=list(transform="Myrnaoff+quasibinom",singlecomp=FALSE,mixcompdist="uniform"))
+
+addMethod(dsc_gtex,name="edgeRglm+jointash.single.u",fn=jointash.wrapper,outputtype="jointash_output",
+          args=list(transform="edgeRglm",singlecomp=TRUE))
+# addMethod(dsc_gtex,name="edgeRglm+jointash.mix.n",fn=jointash.wrapper,outputtype="jointash_output",
+#           args=list(transform="edgeRglm+quasibinom",singlecomp=FALSE,mixcompdist="normal"))
+# addMethod(dsc_gtex,name="edgeRglm+jointash.mix.u",fn=jointash.wrapper,outputtype="jointash_output",
+#           args=list(transform="edgeRglm+quasibinom",singlecomp=FALSE,mixcompdist="uniform"))
+
+addMethod(dsc_gtex,name="DESeqglm+jointash.single.u",fn=jointash.wrapper,outputtype="jointash_output",
+          args=list(transform="DESeqglm",singlecomp=TRUE))
+# addMethod(dsc_gtex,name="DESeqglm+jointash.mix.n",fn=jointash.wrapper,outputtype="jointash_output",
+#           args=list(transform="DESeqglm+quasibinom",singlecomp=FALSE,mixcompdist="normal"))
+# addMethod(dsc_gtex,name="DESeqglm+jointash.mix.u",fn=jointash.wrapper,outputtype="jointash_output",
+#           args=list(transform="DESeqglm+quasibinom",singlecomp=FALSE,mixcompdist="uniform"))
