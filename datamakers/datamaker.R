@@ -209,6 +209,7 @@ datamaker = function(args){
   sebetahat.edgeRglm = abs(betahat.edgeRglm/tscore)
   
   # Get sebetahat from DESeq.glm (infer from betahat & pval)
+  library(DESeq)
   cds = newCountDataSet(counts+args$pseudocounts, condition )
   cds = estimateSizeFactors( cds )
   cds = estimateDispersions( cds )
