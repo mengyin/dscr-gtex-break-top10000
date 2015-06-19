@@ -209,15 +209,23 @@ datamaker = function(args){
   sebetahat.edgeRglm = abs(betahat.edgeRglm/tscore)
   
   # Get sebetahat from DESeq.glm (infer from betahat & pval)
+  library(DESeq)
   cds = newCountDataSet(counts+args$pseudocounts, condition )
   cds = estimateSizeFactors( cds )
-  cds = estimateDispersions( cds )
-  fit1 = fitNbinomGLMs( cds, count ~ condition )     
-  fit0 = fitNbinomGLMs( cds, count ~ 1 )
-  betahat.DESeqglm = fit1[,2]
-  df.DESeqglm = length(condition)-2
-  tscore = qt(1-nbinomGLMTest(fit1,fit0)/2,df=df.DESeqglm)
-  sebetahat.DESeqglm = abs(betahat.DESeqglm/tscore)
+  cds = try(estimateDispersions( cds ),silent=TRUE)
+  if (class(cds)=="try-error"){
+    betahat.DESeqglm = NA
+    sebetahat.DESeqglm = NA
+    df.DESeqglm = length(condition)-2
+  }else{
+    fit1 = fitNbinomGLMs( cds, count ~ condition )     
+    fit0 = fitNbinomGLMs( cds, count ~ 1 )
+    betahat.DESeqglm = fit1[,2]
+    df.DESeqglm = length(condition)-2
+    tscore = qt(1-nbinomGLMTest(fit1,fit0)/2,df=df.DESeqglm)
+    sebetahat.DESeqglm = abs(betahat.DESeqglm/tscore)
+  }
+  
   
   
   # meta data
