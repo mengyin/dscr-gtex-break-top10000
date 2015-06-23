@@ -3,6 +3,8 @@ sourceDir("methods")
 
 #addMethod(dsc_gtex,name="DESeq",fn=deseq.wrapper,outputtype="qval_output",args=list(exacttest=TRUE))
 # addMethod(dsc_gtex,name="DESeq.glm",fn=deseq.wrapper,outputtype="qval_output",args=list(exacttest=FALSE))
+addMethod(dsc_gtex,name="DESeq2",fn=deseq2.wrapper,outputtype="qval_output")
+
 
 addMethod(dsc_gtex,name="edgeR",fn=edger.wrapper,outputtype="qval_output",args=list(exacttest=TRUE))
 # addMethod(dsc_gtex,name="edgeR.glm",fn=edger.wrapper,outputtype="qval_output",args=list(exacttest=FALSE))
