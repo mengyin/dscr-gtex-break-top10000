@@ -3,11 +3,11 @@
 score = function(data, output){
   if (class(output)=="list"){
     qvalue = output$qvalue
-    FDR = mean(qvalue<=0.05)
+    FDR = mean(qvalue<=0.05,na.rm=TRUE)
     if (is.null(output$qvalue.lfsr)){
       FDR.lfsr = FDR
     }else{
-      FDR.lfsr = mean(output$qvalue.lfsr<=0.05)
+      FDR.lfsr = mean(output$qvalue.lfsr<=0.05,na.rm=TRUE)
     }
     res = c(FDR, FDR.lfsr)
     names(res) = c("FDR_005","FDR.fsr_005")

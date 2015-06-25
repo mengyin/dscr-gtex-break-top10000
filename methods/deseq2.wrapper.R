@@ -12,7 +12,9 @@ deseq2.wrapper = function(input,args){
   dds = nbinomWaldTest(dds)
   res = results(dds)
   pvalue = res$pvalue
-  qvalue = qvalue(pvalue)$qval
+  qvalue = rep(NA,length(pvalue))
+  qvalue[!is.na(pvalue)] = qvalue(pvalue[!is.na(pvalue)])$qval
+  
   
   return(list(qvalue = qvalue, pvalue=pvalue))
 }
