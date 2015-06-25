@@ -4,6 +4,7 @@ dsc_gtex = new.dsc("gtex","dsc-gtex-files")
 source("scenarios_test.R")
 source("methods_test.R")
 source("score.R")
+source("choose_ash_parameters.R")
 
 jointash2qval_est =function(output){
   library(ashr)
