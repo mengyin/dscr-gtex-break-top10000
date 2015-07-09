@@ -1,5 +1,5 @@
 data_path.txt
 dsc-gtex-files/
 res.Rdata
-*.Rhistory
+.Rhistory
 *~
